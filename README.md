@@ -57,6 +57,10 @@ If no path is provided, it defaults to the current directory (`.`).
 3. Run:
    ```sh
    ./dupl -path /your/target
+
+   ./dupl -p /your/target
+
+   ./dupl /your/target
    ```
 
 ---

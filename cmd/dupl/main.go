@@ -36,8 +36,11 @@ func main() {
 		return
 	}
 
+	// Support positional argument as path
 	if *pathAlias != "" {
 		*rootPath = *pathAlias
+	} else if args := flag.Args(); len(args) > 0 {
+		*rootPath = args[0]
 	}
 
 	logx.Info(fmt.Sprintf("Searching for duplicate files in: %s", *rootPath))
