@@ -8,6 +8,8 @@ import (
 	"github.com/raulviigipuu/dupl/internal/logx"
 )
 
+var Version = "dev" // default if not overridden at build time
+
 func main() {
 
 	logx.Init(nil)
@@ -18,11 +20,19 @@ func main() {
 	pathAlias := flag.String("p", "", "Alias for -path")
 	help := flag.Bool("help", false, "Show help")
 	helpAlias := flag.Bool("h", false, "Show help (short)")
+	versionFlag := flag.Bool("v", false, "Show version and exit")
 
 	flag.Parse()
 
+	// Help
 	if *help || *helpAlias {
 		flag.Usage()
+		return
+	}
+
+	// Version
+	if *versionFlag {
+		logx.Info(fmt.Sprintf("dupl version: %s", Version))
 		return
 	}
 
