@@ -5,30 +5,52 @@ import (
 	"path/filepath"
 )
 
-// FileData stores file name and size for comparison
-type FileData struct {
-	Name string
-	Size int64
-}
+// Find recursively walks through the directory tree starting at rootDirectoryPath,
+// and returns a DuplicateFilesMap which groups files by name and size.
+func Find(rootDirectoryPath string) (DuplicateFilesMap, error) {
+	// Initialize the map to hold grouped files
+	duplicateFilesMap := make(DuplicateFilesMap)
 
-// Find searches for duplicate files in the specified root directory.
-func Find(rootPath string) (map[FileData][]string, error) {
-	filesMap := make(map[FileData][]string)
-
-	err := filepath.Walk(rootPath, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if !info.IsDir() {
-			fd := FileData{Name: info.Name(), Size: info.Size()}
-			filesMap[fd] = append(filesMap[fd], path)
-		}
-		return nil
-	})
-
+	// Start traversal
+	// Note that structs, slices and channels are reference types, so I pointer goes to function
+	err := checkDirectory(rootDirectoryPath, duplicateFilesMap)
 	if err != nil {
 		return nil, err
 	}
 
-	return filesMap, nil
+	return duplicateFilesMap, nil
+}
+
+// checkDirectory visits all files in the given path and
+// updates the provided DuplicateFilesMap with them.
+func checkDirectory(currentPath string, duplicateFilesMap DuplicateFilesMap) error {
+	entries, err := os.ReadDir(currentPath)
+	if err != nil {
+		return err
+	}
+
+	for _, entry := range entries {
+		fullPath := filepath.Join(currentPath, entry.Name())
+
+		if entry.IsDir() {
+			// Recurse into subdirectory
+			if err := checkDirectory(fullPath, duplicateFilesMap); err != nil {
+				return err
+			}
+		} else {
+			info, err := entry.Info()
+			if err != nil {
+				return err
+			}
+
+			fileData := FileData{
+				Name: info.Name(),
+				Size: info.Size(),
+			}
+
+			duplicateFilesMap[fileData] = append(duplicateFilesMap[fileData], fullPath)
+		}
+	}
+
+	return nil
 }

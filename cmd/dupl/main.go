@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
 
 	"github.com/raulviigipuu/dupl/internal/finder"
 	"github.com/raulviigipuu/dupl/internal/logx"
@@ -12,7 +11,7 @@ import (
 func main() {
 
 	logx.Init(nil)
-	logx.Info("Starting dupl")
+	logx.Info("Starting dupl...")
 
 	// Define command-line flags
 	rootPath := flag.String("path", ".", "Specify root directory (default: current dir)")
@@ -31,19 +30,18 @@ func main() {
 		*rootPath = *pathAlias
 	}
 
-	fmt.Printf("Searching for duplicate files in: %s\n", *rootPath)
+	logx.Info(fmt.Sprintf("Searching for duplicate files in: %s", *rootPath))
 
 	duplicates, err := finder.Find(*rootPath)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-		os.Exit(1)
+		logx.FatalErr(err)
 	}
 
 	for _, files := range duplicates {
 		if len(files) > 1 {
-			fmt.Println("Duplicates found:")
+			logx.Info("Duplicates found:")
 			for _, file := range files {
-				fmt.Println(file)
+				logx.Info(file)
 			}
 		}
 	}
