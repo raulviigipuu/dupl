@@ -26,7 +26,7 @@ func main() {
 
 	// Help
 	if *help || *helpAlias {
-		flag.Usage()
+		printHelp()
 		return
 	}
 
@@ -55,4 +55,22 @@ func main() {
 			}
 		}
 	}
+}
+
+func printHelp() {
+	fmt.Println("dupl — Fast duplicate file finder")
+	fmt.Println()
+	fmt.Println("Usage:")
+	fmt.Println("  dupl [options]")
+	fmt.Println()
+	fmt.Println("Options:")
+	fmt.Println("  -path string     Root directory to scan (default: \".\")")
+	fmt.Println("  -p string        Alias for -path")
+	fmt.Println("  -v               Show version and exit")
+	fmt.Println("  -h, -help        Show this help and exit")
+	fmt.Println()
+	fmt.Println("Examples:")
+	fmt.Println("  dupl -p /data/photos")
+	fmt.Println("  dupl -path ./backup")
+	fmt.Println("  dupl -v")
 }
